@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_codigo_state/models/superhero_model.dart';
-import 'package:flutter_codigo_state/providers/superhero_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_codigo_state/cubit/superhero/superhero_cubit.dart';
 
-import '../providers/counter_provider.dart';
+import '../models/superhero_model.dart';
 
-class RegisterPage extends StatelessWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+class RegistePage extends StatelessWidget {
+  const RegistePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider = Provider.of<CounterProvider>(context);
-    SuperheroProvider superheroProvider =
-        Provider.of<SuperheroProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Register Page"),
@@ -26,26 +21,29 @@ class RegisterPage extends StatelessWidget {
               color: Colors.pinkAccent,
               child: Text("Agregar personaje"),
               onPressed: () {
-                SuperheroModel superheroModel = SuperheroModel(
-                  name: "Superman",
-                  experience: 2000,
-                  skills: ["Volar","Super fuerza"],
+                SuperheroModel superhero = SuperheroModel(
+                  name: "Flash",
+                  experience: 4,
+                  skills: [
+                    "Supervelocidad",
+                    "Resistencia",
+                  ],
                 );
-                superheroProvider.createSuperhero(superheroModel);
+                context.read<SuperheroCubit>().createSuperhero(superhero);
               },
             ),
             MaterialButton(
               color: Colors.greenAccent,
               child: Text("Actualizar experiencia"),
               onPressed: () {
-                superheroProvider.updateExperience(52220);
+                context.read<SuperheroCubit>().updateExperience(20000);
               },
             ),
             MaterialButton(
               color: Colors.blue,
               child: Text("Agregar habilidad"),
               onPressed: () {
-                superheroProvider.addSkill("Rayos X");
+                context.read<SuperheroCubit>().addSkill("super metabolismo");
               },
             ),
           ],

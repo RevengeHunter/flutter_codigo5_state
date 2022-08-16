@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_codigo_state/models/superhero_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_codigo_state/cubit/superhero/superhero_cubit.dart';
 import 'package:flutter_codigo_state/pages/register_page.dart';
-import 'package:flutter_codigo_state/providers/superhero_provider.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/counter_provider.dart';
+import '../models/superhero_model.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    CounterProvider counterProvider = Provider.of<CounterProvider>(context);
-    SuperheroProvider superheroProvider =
-        Provider.of<SuperheroProvider>(context);
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => RegisterPage()));
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistePage()));
         },
         child: Icon(Icons.add),
       ),
@@ -27,20 +21,29 @@ class HomePage extends StatelessWidget {
         title: Text(
           "Home",
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              counterProvider.addCounter();
-            },
-            icon: Icon(Icons.add),
-          ),
-        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: superheroProvider.superHero == null
-            ? Text("No hay registro")
-            : InfoSuperheroWidget(superheroModel: superheroProvider.superHero!),
+      body: BlocBuilder<SuperheroCubit,SuperheroState>(
+        builder: (BuildContext context, SuperheroState state){
+          print(state.runtimeType);
+          switch(state.runtimeType){
+            case SuperheroInit:
+              // SuperheroInit superheroInit = state as SuperheroInit;
+              bool value = (state as SuperheroInit).isCreatedSuperhero;
+              // print(superheroInit.isCreatedSuperhero);
+              return Center(
+                child: Text("No hay nada registrado"),
+              );
+            case SuperheroCreated:
+              SuperheroCreated superheroCreated = state as SuperheroCreated;
+              return InfoSuperheroWidget(
+                superheroModel: superheroCreated.superheroModel,
+              );
+            default:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+          }
+        },
       ),
     );
   }
@@ -53,41 +56,43 @@ class InfoSuperheroWidget extends StatelessWidget {
     required this.superheroModel,
   });
 
+  int countSkills = 0;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Información del básica",
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.w600,
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
+          Text(
+            "Información del básica",
+            style: TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        Divider(),
-        ListTile(
-          title: Text("Batman"),
-          subtitle: Text("Nombre del personaje"),
-        ),
-        ListTile(
-          title: Text("${superheroModel.experience.toString()} años"),
-          subtitle: Text("Experiencia"),
-        ),
-        Divider(),
-        Text(
-          "Habilidades",
-          style: TextStyle(
-            fontSize: 22.0,
-            fontWeight: FontWeight.w600,
+          Divider(),
+          ListTile(
+            title: Text(superheroModel.name),
+            subtitle: Text("Nombre del personaje"),
           ),
-        ),
-        ...superheroModel.skills.map(
-          (e) => ListTile(
+          ListTile(
+            title: Text("${superheroModel.experience} años"),
+            subtitle: Text("Experiencia"),
+          ),
+          Divider(),
+          Text(
+            "Habilidades",
+            style: TextStyle(
+              fontSize: 22.0,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          Column(children: superheroModel.skills.map((e) => ListTile(
             title: Text(e),
-            subtitle: Text("Número: 1"),
-          ),
-        ),
-      ],
+            subtitle: Text("Número: ${countSkills++}"),
+          )).toList(),),
+        ],
+      ),
     );
   }
 }

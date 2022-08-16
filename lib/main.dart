@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_codigo_state/cubit/superhero/superhero_cubit.dart';
 import 'package:flutter_codigo_state/pages/home_page.dart';
-import 'package:flutter_codigo_state/providers/counter_provider.dart';
-import 'package:flutter_codigo_state/providers/superhero_provider.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,10 +13,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
+    return MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (BuildContext context) => CounterProvider()),
-        ChangeNotifierProvider(create: (BuildContext context) => SuperheroProvider()),
+        BlocProvider(create: (BuildContext context) => SuperheroCubit()),
       ],
       child: MaterialApp(
         title: "States",
