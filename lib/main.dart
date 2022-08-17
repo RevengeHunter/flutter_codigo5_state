@@ -4,6 +4,8 @@ import 'package:flutter_codigo_state/bloc/calculator/calculator_bloc.dart';
 import 'package:flutter_codigo_state/pages/calculator_page.dart';
 import 'package:flutter_codigo_state/pages/home_page.dart';
 
+import 'bloc/superhero/superhero_bloc.dart';
+
 void main(){
   runApp(MyApp());
 }
@@ -16,6 +18,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_)=>CalculatorBloc()),
+        BlocProvider(create: (_)=>SuperheroBloc()),
       ],
       child: MaterialApp(
         title: "States",
